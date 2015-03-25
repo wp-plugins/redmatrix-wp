@@ -236,7 +236,7 @@ function redmatrix_wp_displayAdminContent() {
 EOF;
 
 	if(isset($_POST['submit']))	{
-		echo "<div style='text-align:center;padding:4px;width:200px;background-color:#FFFF99;border:1xp solid #CCCCCC;color:#000000;'>Settings Saved!</div>";
+		echo "<div style='text-align:center;padding:4px;width:200px;background-color:#FFFF99;border:1xp solid #CCCCCC;color:#000000;'>" . __('Settings Saved.') .  "</div>";
 	}
 }
 
@@ -244,7 +244,7 @@ function redmatrix_wp_post_checkbox() {
 
     add_meta_box(
         'redmatrix_wp_meta_box_id', 
-        'Cross Post to Redmatrix',
+        __('Cross Post to Redmatrix'),
         'redmatrix_wp_post_meta_content',
         'post',
         'normal',
@@ -252,9 +252,17 @@ function redmatrix_wp_post_checkbox() {
     );
 }
 
-function redmatrix_wp_post_meta_content($post_id) {
+function redmatrix_wp_post_meta_content($post) {
+
+	if (($post) && (get_post_meta($post->ID, "redmatrix_xpost", true) == '1') 
+		|| (get_post_meta($post->ID, "post_from_red", true) == '1')) {
+		$checked = ' checked="checked" ' ;
+	}
+	else {
+		$checked = '';
+	}
     wp_nonce_field(plugin_basename( __FILE__ ), 'redmatrix_wp_nonce');
-    echo '<input type="checkbox" name="redmatrix_xpost" value="1" /> Cross post?';
+    echo '<input type="checkbox" name="redmatrix_xpost" value="1" ' . $checked . '/> ' . __('Cross post?') ;
 }
 
 function redmatrix_wp_post_field_data($post_id) {
@@ -294,13 +302,13 @@ function redmatrix_wp_display_admin_page() {
 }
 
 function redmatrix_wp_settings_link($links) { 
-	$settings_link = '<a href="options-general.php?page=xpost-to-redmatrix">Settings</a>'; 
+	$settings_link = '<a href="options-general.php?page=xpost-to-redmatrix">' . __('Settings') . '</a>'; 
   	array_unshift($links, $settings_link); 
   	return $links; 
 }
 
 function redmatrix_wp_admin() {
-	add_options_page("Crosspost to redmatrix", "Crosspost to redmatrix", "manage_options", "xpost-to-redmatrix", "redmatrix_wp_display_admin_page");
+	add_options_page( __("Crosspost to redmatrix"), __("Crosspost to redmatrix"), "manage_options", "xpost-to-redmatrix", "redmatrix_wp_display_admin_page");
 }
 
 register_deactivation_hook( __FILE__, 'redmatrix_wp_deactivate' );
